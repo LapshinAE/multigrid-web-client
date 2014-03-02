@@ -1,0 +1,11 @@
+*.pyc
+*.txt
+*.iml
+
+.idea/
+*/.idea/
+
+files
+input_files
+
+celerybeat-schedule

@@ -1,5 +1,60 @@
 {% extends "base.html" %}
 
 {% block content %}
-    {{ data.task.result }}
+    <script src="{{ STATIC_URL }}js/highcharts/highcharts.js"></script>
+    <script src="{{ STATIC_URL }}js/highcharts/modules/exporting.js"></script>
+
+    <script>
+        $(function () {
+            $('#task_container').highcharts({
+                title: {
+                    text: 'Task {{ data.task.task_id }}'
+                },
+
+                xAxis: {
+                    tickInterval: 1
+                },
+
+                yAxis: {
+                    tickInterval: 1
+                },
+
+                tooltip: {
+                    headerFormat: '<b>{series.name}</b><br />',
+                    pointFormat: 'x = {point.x}, y = {point.y}'
+                },
+
+                series: [{
+                    data: {{ data.array }},
+                    pointStart: 0
+                }]
+            });
+        });
+    </script>
+
+    <div>
+        <form action="/task/{{ data.task.id }}/" method="POST" class="navbar-form offset1">{% csrf_token %}
+            <p>
+            <h4>Расчетный случай:</h4>
+            <select name="loadcase_name" class="span3">
+                {% for loadcase in data.loadcases %}
+                    <option value="{{ loadcase }}" {% if data.loadcase == loadcase %}selected="selected" {% endif %}>{{ loadcase }}</option>
+                {% endfor %}
+            </select>
+
+            <h4>Параметер:</h4>
+            <select name="param_name" class="span3">
+                {% for param in data.params %}
+                    <option value="{{ param }}" {% if data.param == param %}selected="selected" {% endif %}>{{ param }}</option>
+                {% endfor %}
+            </select>
+
+            <div>
+                <button type="submit"  class="btn btn-primary">Подтвердить</button>
+            </div>
+
+        </form>
+    </div>
+
+    <div id="task_container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 {% endblock %}

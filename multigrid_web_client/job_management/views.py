@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 import json
+import ast
+
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 
@@ -352,10 +354,37 @@ def get_job(request, job_id):
 def get_task(request, task_id):
 	try:
 		task = Task.objects.get(pk=task_id)
+		data = dict()
+		data['task'] = task
+		result = ast.literal_eval(task.result)
+
+		loadcases_list = result.keys()
+		data['loadcases'] = loadcases_list
+
+		if len(loadcases_list) is 1:
+			loadcase = loadcases_list[0]
+			data['loadcase'] = loadcase
+			params = result[loadcase].keys()
+			data['params'] = params
+			if len(params) == 1:
+				param = params[0]
+				data['param'] = param
 	except Task.DoesNotExist:
 		raise Http404
-	data = dict()
-	data['task'] = task
+
+	if request.POST:
+		loadcase = request.POST.get('loadcase_name', None)
+		param = request.POST.get('param_name', None)
+		if loadcase and param:
+			data['loadcase'] = loadcase
+			data['params'] = result[loadcase].keys()
+			data['param'] = param
+			data['array'] = result[loadcase][param]
+		elif loadcase:
+			data['loadcase'] = loadcase
+			data['params'] = result[loadcase].keys()
+
+
 	return TemplateResponse(request, 'task.html', {'data': data})
 
 
