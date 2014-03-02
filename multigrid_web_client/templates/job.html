@@ -49,27 +49,15 @@
                 </div>
             </div>
 
-{% comment %}
             <div id="tasks" class="tab-pane fade">
-                <table class="table">
-                    <thead>
+                <table>
+                {% for task in data.tasks %}
                     <tr>
-                        <th>#</th>
+                        <td><a href="/task/{{ task.id }}/">{{ task.task_id }}</a></td>
                     </tr>
-                    </thead>
-                    <tbody>
-                    {% for estimation in data.estimations %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td><a href="/estimation/{{ estimation.id }}/">{{ estimation.name }}</a></td>
-                            <td>{{ estimation.date }}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
+                {% endfor %}
                 </table>
-                <a href="/estimation/create/{{ data.project.id }}/" class="btn btn-primary">Создать оценку</a>
             </div>
-            {% endcomment %}
         </div>
     </div>
 

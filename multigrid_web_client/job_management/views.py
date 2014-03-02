@@ -339,12 +339,24 @@ def get_job(request, job_id):
 		loadcases = job.loadcases.all()
 		lc_names = [lc.name for lc in loadcases]
 		#lc_names = util.decode_dict(lc_names)
+		# concatenate all loadcases names
 		result = ', '.join([x for x in lc_names])
 	except Job.DoesNotExist:
 		raise Http404
 	data['job'] = job
 	data['loadcases'] = result
+	data['tasks'] = job.task_set.filter(is_finished=True)
 	return TemplateResponse(request, 'job.html', {'errors': errors, 'data': data})
+
+@login_required
+def get_task(request, task_id):
+	try:
+		task = Task.objects.get(pk=task_id)
+	except Task.DoesNotExist:
+		raise Http404
+	data = dict()
+	data['task'] = task
+	return TemplateResponse(request, 'task.html', {'data': data})
 
 
 def parse_input_params(param):

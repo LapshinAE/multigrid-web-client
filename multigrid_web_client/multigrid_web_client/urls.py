@@ -21,6 +21,7 @@ urlpatterns = patterns('',
 					url(r'^delete_job/(?P<job_id>\d+)/$', 'job_management.views.delete_job'),
 					url(r'^edit_job/(?P<job_id>\d+)/$', 'job_management.views.edit_job'),
 					url(r'^calc_job/(?P<job_id>\d+)/$', 'job_management.views.calc_job'),
+					url(r'^task/(?P<task_id>\d+)/$', 'job_management.views.get_task'),
 
 					# Admin
 					url(r'^admin/', include(admin.site.urls)),
