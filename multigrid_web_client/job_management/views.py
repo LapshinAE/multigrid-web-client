@@ -15,6 +15,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import redirect, render
 from django.conf import settings
+from rest_framework.renderers import JSONRenderer
 
 from job_management import util
 from job_management.forms import MathModelForm, JobForm, LoadcaseForm
@@ -398,3 +399,25 @@ def get_input_list_from_file(file_name):
 	Return input parameters list from file
 	"""
 	return []
+
+
+class JSONResponse(HttpResponse):
+	"""
+	An HttpResponse that renders its content into JSON.
+	"""
+	def __init__(self, data, **kwargs):
+		content = JSONRenderer().render(data)
+		kwargs['content_type'] = 'application/json'
+		super(JSONResponse, self).__init__(content, **kwargs)
+
+
+def get_result(request, task_id):
+	"""
+	Return task result in JSON
+	"""
+	try:
+		task = Task.objects.get(task_id=task_id)
+		# replace ' on ", because sting in JSON surrounded with "
+		return HttpResponse(task.result.replace("'", '"'))
+	except Task.DoesNotExist:
+		return Http404

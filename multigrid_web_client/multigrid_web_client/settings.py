@@ -42,6 +42,7 @@ INSTALLED_APPS = (
 	'job_management',
 	'django_extensions',
 	'south',
+	'rest_framework',
 )
 
 MIDDLEWARE_CLASSES = (

@@ -23,6 +23,9 @@ urlpatterns = patterns('',
 					url(r'^calc_job/(?P<job_id>\d+)/$', 'job_management.views.calc_job'),
 					url(r'^task/(?P<task_id>\d+)/$', 'job_management.views.get_task'),
 
+					#API
+					url(r'api/get_result/(?P<task_id>[0-9a-zA-Z\-]+)/$', 'job_management.views.get_result'),
+
 					# Admin
 					url(r'^admin/', include(admin.site.urls)),
 					)
