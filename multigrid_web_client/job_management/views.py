@@ -7,7 +7,7 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 
 from django.db import models
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, StreamingHttpResponse
 from django.template.response import TemplateResponse
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.models import User
@@ -401,6 +401,8 @@ def get_input_list_from_file(file_name):
 	return []
 
 
+#JSON API methods
+
 class JSONResponse(HttpResponse):
 	"""
 	An HttpResponse that renders its content into JSON.
@@ -418,6 +420,30 @@ def get_result(request, task_id):
 	try:
 		task = Task.objects.get(task_id=task_id)
 		# replace ' on ", because sting in JSON surrounded with "
-		return HttpResponse(task.result.replace("'", '"'))
+		return StreamingHttpResponse(json.dumps(ast.literal_eval(task.result)))
 	except Task.DoesNotExist:
+		return Http404
+
+
+def get_ids(request, job_name):
+	"""
+	Return ids of tasks contained in job with name job_name
+	"""
+	try:
+		job = Job.objects.get(name=job_name)
+		ids = [task.task_id for task in job.task_set.all()]
+		return StreamingHttpResponse(json.dumps(ids))
+	except Job.DoesNotExist:
+		return Http404
+
+
+def get_results_from_job(request, job_name):
+	"""
+	Return list of task results from tasks contained in job with job_name
+	"""
+	try:
+		job = Job.objects.get(name=job_name)
+		results = [ast.literal_eval(task.result) for task in job.task_set.all()]
+		return StreamingHttpResponse(json.dumps(results))
+	except Job.DoesNotExist:
 		return Http404

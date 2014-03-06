@@ -23,8 +23,11 @@ urlpatterns = patterns('',
 					url(r'^calc_job/(?P<job_id>\d+)/$', 'job_management.views.calc_job'),
 					url(r'^task/(?P<task_id>\d+)/$', 'job_management.views.get_task'),
 
-					#API
+					#JSON API
 					url(r'api/get_result/(?P<task_id>[0-9a-zA-Z\-]+)/$', 'job_management.views.get_result'),
+					url(r'api/get_ids/(?P<job_name>\w+)/$', 'job_management.views.get_ids'),
+					url(r'api/get_results_from_job/(?P<job_name>\w+)/$', 'job_management.views.get_results_from_job'),
+
 
 					# Admin
 					url(r'^admin/', include(admin.site.urls)),
