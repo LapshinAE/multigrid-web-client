@@ -35,6 +35,9 @@
     <div>
         <form action="/task/{{ data.task.id }}/" method="POST" class="navbar-form offset1">{% csrf_token %}
             <p>
+            <h4>Входные параметры:</h4>
+            <div>{{ data.task.input_params }}</div>
+
             <h4>Расчетный случай:</h4>
             <select name="loadcase_name" class="span3">
                 {% for loadcase in data.loadcases %}
