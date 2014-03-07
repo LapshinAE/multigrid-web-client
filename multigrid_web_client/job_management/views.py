@@ -31,6 +31,7 @@ from solvers import pythonsolver
 from solvers import modelicasolver
 
 import logging
+from job_management.util import parse_input_params, decode_dict
 
 logger = logging.getLogger('multigrid_web_app')
 
@@ -292,6 +293,10 @@ def edit_job(request, job_id):
 		else:
 			job.is_input_file = False
 
+		job_tasks = job.task_set.all()
+		for task in job_tasks:
+			task.delete()
+
 		job.status = 0.0
 		job.save()
 		return redirect('/jobs/')
@@ -320,10 +325,10 @@ def calc_job(request, job_id):
 	if job.is_input_file:
 		params_list = get_input_list_from_file(job.input_params)
 	else:
-		input_parameters_string = job.input_params.split('|') # list of input parameters in string
+		generated_list = parse_input_params(job.input_params)
 		params_list = []
-		for item in input_parameters_string:
-			params_list.append(parse_input_params(item))
+		for item in generated_list:
+			params_list.append(json.loads(item, object_hook=decode_dict))
 
 	task_ids = calculate(loadcases, params_list)
 
@@ -387,11 +392,6 @@ def get_task(request, task_id):
 
 
 	return TemplateResponse(request, 'task.html', {'data': data})
-
-
-def parse_input_params(param):
-	parameter = json.loads(param, object_hook=util.decode_dict)
-	return parameter
 
 
 def get_input_list_from_file(file_name):
