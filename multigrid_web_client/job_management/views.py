@@ -20,7 +20,7 @@ from rest_framework.renderers import JSONRenderer
 from job_management import util
 from job_management.forms import MathModelForm, JobForm, LoadcaseForm
 
-from job_management.models import Job, MathModel, Loadcase, Task
+from job_management.models import Job, MathModel, Loadcase, Task, Project
 
 from multigrid import calculate
 from multigrid.solvers.modelicasolver import ModelicaLoadcase
@@ -39,7 +39,7 @@ MODEL_TYPES = [pythonsolver.name, modelicasolver.name]
 
 @login_required
 def get_main(request):
-	return redirect('/jobs/')
+	return redirect('/projects/')
 
 
 def register(request):
@@ -73,7 +73,7 @@ def register(request):
 	user = authenticate(username=name, password=pass1)
 	if user.is_active:
 		auth_login(request, user)
-		return redirect("/jobs/")
+		return redirect("/projects/")
 	else:
 		return HttpResponse("<html><body>Everything is BAD</body></html>")
 
@@ -106,7 +106,7 @@ def login(request):
 	if errors.keys():
 		return TemplateResponse(request, 'login.html', {'errors': errors, 'data': data})
 	else:
-		return redirect('/jobs/')
+		return redirect('/projects/')
 
 
 def logout(request):
@@ -127,16 +127,14 @@ def profile(request):
 		user.email = email
 		user.save()
 
-	return redirect('/jobs/')
-
+	return redirect('/projects/')
 
 
 
 @login_required
-def jobs_list(request):
-	all_jobs, errors, data, num_jobs = {}, {}, {}, {}
-	#num_paginator = Jobs.objects.filter(user=request.user).count()
-	all_jobs = Job.objects.filter(user=request.user).order_by("-date")
+def project(request, project_id):
+	proj = Project.objects.get(user=request.user, pk=project_id)
+	all_jobs = proj.job_set.order_by("-date")
 
 	paginator = Paginator(all_jobs, 8)
 	page = request.GET.get('page')
@@ -148,36 +146,45 @@ def jobs_list(request):
 	except EmptyPage:
 		data = paginator.page(paginator.num_pages)
 
-	return TemplateResponse(request, 'jobs.html',
-							{'errors': errors, 'data': data, 'num_pages': xrange(1, paginator.num_pages + 1), 'flower': settings.FLOWER_ADDRESS})
+	return TemplateResponse(request, 'jobs/jobs.html',
+							{'data': data, 'project': proj,'project_id': proj.id, 'num_pages': xrange(1, paginator.num_pages + 1), 'flower': settings.FLOWER_ADDRESS})
 
 
 @login_required
-def search_job(request):
+def search_job(request, project_id):
+	try:
+		project = Project.objects.get(user=request.user, pk=project_id)
+	except Project.DoesNotExist:
+		raise Http404
 	if request.method == 'GET':
-		return redirect('/jobs/')
+		return redirect('/project/' + str(project_id) + '/')
 	else:
 		data, errors, = {}, {}
 		query = request.POST.get('search_q', 0)
-		data = Job.objects.filter(user=request.user, name__icontains=query).order_by("-date")
-		return TemplateResponse(request, 'search_jobs.html', {'errors': errors, 'data': data, 'query': query})
+		data = project.job_set.filter(name__icontains=query).order_by("-date")
+		return TemplateResponse(request, 'jobs/search_jobs.html', {'errors': errors, 'data': data, 'query': query, 'project_id': project_id})
 
 
 @login_required
 def delete_job(request, job_id):
 	try:
-		job = Job.objects.get(user=request.user, pk=job_id)
+		job = Job.objects.get(pk=job_id)
 	except Job.DoesNotExist:
 		raise Http404
 	job.delete()
-	return redirect('/jobs/')
+	return redirect('/project/' + str(job.project.id) + '/')
 
 
 @login_required
-def create_job(request):
+def create_job(request, project_id):
+	try:
+		project = Project.objects.get(user=request.user, pk=project_id)
+	except Project.DoesNotExist:
+		raise Http404
+
 	if request.method == 'GET':
 		loadcases = [(lc.name, lc.id) for lc in Loadcase.objects.all()]
-		return TemplateResponse(request, 'create_job.html', {'loadcases': loadcases})
+		return TemplateResponse(request, 'jobs/create_job.html', {'loadcases': loadcases, 'project_id': project_id})
 
 	name = request.POST.get('name', "")
 	loadcases_ids = request.POST.getlist('loadcases')
@@ -194,13 +201,13 @@ def create_job(request):
 		is_input_file = False
 
 
-	job = Job(name=name, user=request.user, input_params=input_parameters, is_input_file=is_input_file,
+	job = Job(name=name, project=project, input_params=input_parameters, is_input_file=is_input_file,
 			  description=request.POST.get('job_description', ""))
 	if job:
 		job.save()
 	for lc_id in loadcases_ids:
 		job.loadcases.add(Loadcase.objects.get(id=lc_id))
-	return redirect('/jobs/')
+	return redirect('/project/' + str(project_id) + '/')
 
 #@login_required
 #def create_job(request):
@@ -233,11 +240,11 @@ def create_job(request):
 
 
 @login_required
-def create_loadcase(request):
+def create_loadcase(request, project_id):
 	if request.method == 'GET':
 		mathmodels = [(model.name, model.id) for model in MathModel.objects.all()]
 		#loadcase_form = LoadcaseForm()
-		return TemplateResponse(request, 'create_loadcase.html', {'models': mathmodels})
+		return TemplateResponse(request, 'create_loadcase.html', {'models': mathmodels, 'project_id': project_id})
 	name = request.POST.get('loadcase_name', "")
 	description = request.POST.get('loadcase_description', "")
 	model_id = request.POST.get('model', 0)
@@ -247,13 +254,13 @@ def create_loadcase(request):
 	loadcase.mathmodel = mathmodel
 	if loadcase:
 		loadcase.save()
-	return redirect('/create_job/')
+	return redirect('/project/' + str(project_id) + '/create_job/')
 
 
 @login_required
-def create_model(request):
+def create_model(request, project_id):
 	if request.method == 'GET':
-		return TemplateResponse(request, 'create_model.html', {'model_types': MODEL_TYPES})
+		return TemplateResponse(request, 'create_model.html', {'model_types': MODEL_TYPES, 'project_id': project_id})
 	model_type = request.POST.get('model_type', None)
 	model = request.POST.get('model', "")
 
@@ -266,19 +273,19 @@ def create_model(request):
 	mathmodel = MathModel(name=model, type=model_type)
 	if mathmodel:
 		mathmodel.save()
-	return redirect('/create_loadcase/')
+	return redirect('/project/' + str(project_id) + '/create_loadcase/')
 
 
 @login_required
 def edit_job(request, job_id):
 	try:
-		job = Job.objects.get(user=request.user, pk=job_id)
+		job = Job.objects.get(pk=job_id)
 	except Job.DoesNotExist:
 		raise Http404
 	if request.method == 'GET':
 		data = {}
 		data['job'] = job
-		return TemplateResponse(request, 'edit_job.html', {'data': data})
+		return TemplateResponse(request, 'jobs/edit_job.html', {'data': data})
 	else:
 		job.name = request.POST.get('job_name', "")
 		job.description = request.POST.get('job_description', "")
@@ -299,7 +306,7 @@ def edit_job(request, job_id):
 
 		job.status = 0.0
 		job.save()
-		return redirect('/jobs/')
+		return redirect('/project/' + str(job.project.id) + '/')
 
 
 @login_required
@@ -336,14 +343,14 @@ def calc_job(request, job_id):
 		task = Task(task_id=task_id, input_params=param, job=job)
 		task.save()
 
-	return redirect('/jobs/')
+	return redirect('/project/' + str(job.project.id) + '/')
 
 
 @login_required
 def get_job(request, job_id):
 	data, errors = {}, {}
 	try:
-		job = Job.objects.get(user=request.user, pk=job_id)
+		job = Job.objects.get(pk=job_id)
 		loadcases = job.loadcases.all()
 		lc_names = [lc.name for lc in loadcases]
 		#lc_names = util.decode_dict(lc_names)
@@ -354,7 +361,7 @@ def get_job(request, job_id):
 	data['job'] = job
 	data['loadcases'] = result
 	data['tasks'] = job.task_set.filter(is_finished=True)
-	return TemplateResponse(request, 'job.html', {'errors': errors, 'data': data})
+	return TemplateResponse(request, 'jobs/job.html', {'errors': errors, 'data': data})
 
 @login_required
 def get_task(request, task_id):

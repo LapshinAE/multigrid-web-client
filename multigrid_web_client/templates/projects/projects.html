@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row">
+        <div >
+            <p><h2 class="text-center"> Проекты </h2></p>
+        </div>
+        {% include "projects/projects_base.html" %}
+    </div>
+    <!-- JobsListing END -->
+
+
+    <!-- AddJob Begin -->
+    <div class="row">
+        <div class="span8 offset2 ">
+            <a href="#addingProject" role="button" class="btn btn-large btn-block btn-primary" onclick="window.location.href ='/create_project/'">+ Создать проект</a>
+        </div>
+    </div>
+    <!-- AddJob END -->
+
+
+    <!-- Paginator Begin -->
+
+
+    <div class="pagination pagination-centered">
+        <ul>
+
+            {% if not data.has_previous %}
+                <li class="disabled">
+                    <a>Назад</a>
+                    {% else %}
+                <li>
+                <a href="?page={{ data.previous_page_number }}">Назад</a>
+            {% endif %}
+            </li>
+            {% for num in num_pages %}
+                {% if num == data.number %}
+                    <li class="active">
+                        <a href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% else %}
+                    <li>
+                        <a href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            <li>
+                {% if not data.has_next %}
+                    <li class="disabled">
+                        <a>Вперед</a>
+                        {% else %}
+                    <li>
+                    <a href="?page={{ data.next_page_number }}">Вперед</a>
+                {% endif %}
+                </li>
+
+        </ul>
+    </div>
+    <!-- Paginator END -->
+
+{% endblock %}

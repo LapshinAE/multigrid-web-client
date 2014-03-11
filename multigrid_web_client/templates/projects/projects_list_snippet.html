@@ -1,0 +1,18 @@
+<tr>
+    <td class="span4"><a id="projectName_{{ forloop.counter }}" href="/project/{{ item.id }}/">{{ item.name }}</a></td>
+    <script type="text/javascript">
+        checkLength("{{ item.name }}","{{ forloop.counter }}");
+    </script>
+    <td class="span4">{{ item.date }}</td>
+    <td class="span1">
+        <div class="btn-group mini-btn">
+            <button class="btn btn-small " type="button" onclick='delProject({{item.id}},function(){ return "{{ item.name}}"; } )'>
+                Удалить
+            </button>
+        </div>
+    </td>
+</tr>
+
+<form action="/delete_project/" method="POST" id="del_project" >{% csrf_token %}
+    <input type="hidden"></input>
+</form>

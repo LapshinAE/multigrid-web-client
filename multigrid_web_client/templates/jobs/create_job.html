@@ -4,7 +4,7 @@
 
     <div class="row">
         <div class="span8 offset1 ">
-            <form action="/create_job/" method="POST" id="create_job" class="navbar-form offset1" enctype="multipart/form-data">{% csrf_token %}
+            <form action="/project/{{ project_id }}/create_job/" method="POST" id="create_job" class="navbar-form offset1" enctype="multipart/form-data">{% csrf_token %}
                 <div>
                     <h4>Название задачи:</h4>
                     <input type="text" id="job_name_id" name="name" class="span3"  placeholder="Job name" >
@@ -24,7 +24,7 @@
                             <br>
                         {% endfor %}
                     </p>
-                    <button type="button" onclick="location.href = '/create_loadcase/';">Add new Loadcase</button>
+                    <button type="button" onclick="location.href = '/project/{{ project_id }}/create_loadcase/';">Add new Loadcase</button>
                 </div>
 
                 <div>

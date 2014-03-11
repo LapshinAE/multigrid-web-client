@@ -3,8 +3,8 @@
         <thead>
         <tr rowspan="4">
             <div class="" style="margin: 0px 0px 10px 0px;">
-                <form action="/search_job/" method="POST" class="navbar-search pull-left">{% csrf_token %}
-                    <input type="text" value="{{ query }}" class="search-query" name="search_q" placeholder="Найти задачу">
+                <form action="/project/{{ project_id }}/search_job/" method="POST" class="navbar-search pull-left">{% csrf_token %}
+                    <input type="text" value="{{ query }}" class="search-query" name="search_q" placeholder="Найти работу">
                 </form>
             </div>
         </tr>
@@ -19,13 +19,13 @@
         {% comment %} With pagination {% endcomment %}
         {%  if data.object_list %}
             {% for item in data.object_list %}
-                {%  include "job_list_snippet.html" %}
+                {%  include "jobs/job_list_snippet.html" %}
             {% endfor %}
         {%  endif %}
         {% comment %} Without pagination {% endcomment %}
         {%  if data.values %}
             {% for item in data.values %}
-                {%  include "job_list_snippet.html" %}
+                {%  include "jobs/job_list_snippet.html" %}
             {% endfor %}
         {% endif %}
     </table>

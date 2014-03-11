@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div class="row">
+        <div >
+            <p>
+            <h2 class="text-center"> Проекты </h2>
+            {% if data %}
+                <h4 class="text-center">Результаты запроса <i>"{{ query }}"</i></h4>
+            {% else %}
+                <h4 class="text-center">По запросу <i>"{{ query }}"</i> ничего не найдено</h4>
+            {% endif %}
+            </p>
+        </div>
+        {% include "projects/projects_base.html" %}
+        <div class="offset2" >
+            <a class="centered" href="/projects/">Назад к списку проектов</a>
+        </div>
+    </div>
+
+{% endblock %}

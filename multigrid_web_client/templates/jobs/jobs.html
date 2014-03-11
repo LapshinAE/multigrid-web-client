@@ -1,11 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <h2>Проект {{ project.name }}</h2>
+    <div>
+        <h4>Описание:</h4>
+        {{ project.description }}
+    </div>
     <div class="row">
         <div >
-            <p><h2 class="text-center"> Задачи </h2></p>
+            <p><h3 class="text-center"> Работы </h3></p>
         </div>
-        {% include "base_jobs.html" %}
+        {% include "jobs/base_jobs.html" %}
     </div>
     <!-- JobsListing END -->
 
@@ -13,7 +18,7 @@
     <!-- AddJob Begin -->
     <div class="row">
         <div class="span8 offset2 ">
-            <a href="#addingJob" role="button" class="btn btn-large btn-block btn-primary" onclick="window.location.href ='/create_job/'">+ Создать работу</a>
+            <a href="#addingJob" role="button" class="btn btn-large btn-block btn-primary" onclick="window.location.href ='/project/{{ project.id }}/create_job/'">+ Создать работу</a>
         </div>
     </div>
     <!-- AddJob END -->

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="span8 offset1 ">
+            <form action="/create_project/" method="POST" id="create_project" class="navbar-form offset1">{% csrf_token %}
+                <div>
+                    <h4>Название проекта:</h4>
+                    <input type="text" id="project_name_id" name="name" class="span3"  placeholder="Project name" >
+                </div>
+
+                <div>
+                    <h4>Описание:</h4>
+                    <textarea rows="3" class="span3" name="description" placeholder="What's this project about?"></textarea>
+                </div>
+
+                <div>
+                    <button type="submit"  class="btn btn-primary center">Create Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{%  endblock %}
+

@@ -5,7 +5,7 @@
     <div class="row">
         <div >
             <p>
-            <h2 class="text-center"> Задачи </h2>
+            <h2 class="text-center"> Работы </h2>
             {% if data%}
                 <h4 class="text-center">Результаты запроса <i>"{{ query }}"</i></h4>
             {% else %}
@@ -13,9 +13,9 @@
             {% endif %}
             </p>
         </div>
-        {% include "base_jobs.html" %}
+        {% include "jobs/base_jobs.html" %}
         <div class="offset2" >
-            <a class="centered" href="/jobs/">Назад к списку задач</a>
+            <a class="centered" href="/project/{{ project_id }}/">Назад к списку работ</a>
         </div>
     </div>
 

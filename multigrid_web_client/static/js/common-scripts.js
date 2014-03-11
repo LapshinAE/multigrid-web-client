@@ -80,6 +80,15 @@ function delJob(job_id, job)
     }
 }
 
+function delProject(project_id, project)
+{
+    if(confirm("Вы уверены, что хотите удалить проект '" + project() +"'"))
+    {
+        document.getElementById('del_project').action+= project_id+'/'
+        del_project.submit()
+    }
+}
+
 function checkLength(string , numId)
 {
     if(string.length >= 35)
