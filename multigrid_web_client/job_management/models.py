@@ -24,6 +24,7 @@ class MathModel(models.Model):
 class Loadcase(models.Model):
 	name = models.CharField(max_length=255)
 	description = models.TextField()
+	solver_params = models.TextField()
 	mathmodel = models.ForeignKey(MathModel)
 
 	def __unicode__(self):

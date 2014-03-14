@@ -247,10 +247,11 @@ def create_loadcase(request, project_id):
 		return TemplateResponse(request, 'create_loadcase.html', {'models': mathmodels, 'project_id': project_id})
 	name = request.POST.get('loadcase_name', "")
 	description = request.POST.get('loadcase_description', "")
+	solver_params = request.POST.get('solver_params', '')
 	model_id = request.POST.get('model', 0)
 
 	mathmodel = MathModel.objects.get(id=model_id)
-	loadcase = Loadcase(name=name, description=description)
+	loadcase = Loadcase(name=name, description=description, solver_params=solver_params)
 	loadcase.mathmodel = mathmodel
 	if loadcase:
 		loadcase.save()
@@ -326,7 +327,7 @@ def calc_job(request, job_id):
 		if mathmodel.type == pythonsolver.name:
 			pass
 		elif mathmodel.type == modelicasolver.name:
-			lc = ModelicaLoadcase(mathmodel.name)
+			lc = ModelicaLoadcase(mathmodel.name, solver_params=json.loads(web_lc.solver_params))
 		loadcases.append(lc)
 
 	if job.is_input_file:
