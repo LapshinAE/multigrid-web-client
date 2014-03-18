@@ -286,11 +286,14 @@ def edit_job(request, job_id):
 	if request.method == 'GET':
 		data = {}
 		data['job'] = job
-		return TemplateResponse(request, 'jobs/edit_job.html', {'data': data})
+		loadcases = [(lc.name, lc.id) for lc in Loadcase.objects.all()]
+		return TemplateResponse(request, 'jobs/edit_job.html', {'data': data, 'project_id': job.project.id, 'loadcases': loadcases, 'job_loadcases': [lc.id for lc in job.loadcases.all()]})
 	else:
 		job.name = request.POST.get('job_name', "")
 		job.description = request.POST.get('job_description', "")
 		job.input_params = request.POST.get('input_params', "")
+		loadcases_ids = request.POST.getlist('loadcases')
+
 
 		input_file = request.FILES.get('input_file', None)
 		if input_file:
@@ -307,6 +310,9 @@ def edit_job(request, job_id):
 
 		job.status = 0.0
 		job.save()
+
+		for lc_id in loadcases_ids:
+			job.loadcases.add(Loadcase.objects.get(id=lc_id))
 		return redirect('/project/' + str(job.project.id) + '/')
 
 
