@@ -45,7 +45,7 @@ def check_results():
 			logger.info("Task " + task.task_id + " finished")
 
 	# Check if Job finished
-	for job in Job.objects.filter(status__lt=1.0):
+	for job in Job.objects.filter(status__lt=100.0):
 		all_job_tasks = job.task_set.all()
 		finished_tasks_count = 0
 		# Job can be finished if it had at least on Task
@@ -61,10 +61,10 @@ def check_results():
 			else:
 				is_finished &= False
 
-		job.status = float(finished_tasks_count)/all_job_tasks.count() if all_job_tasks.count() > 0.0 else 0.0
+		job.status = 100.0 * float(finished_tasks_count)/all_job_tasks.count() if all_job_tasks.count() > 0.0 else 0.0
 
 		if is_finished:
-			job.status = 1.0
+			job.status = 100.0
 			logger.info("Job " + job.name + " is finished")
 
 			try:
