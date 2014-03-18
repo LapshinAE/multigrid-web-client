@@ -35,7 +35,7 @@ from job_management.util import parse_input_params, decode_dict
 
 logger = logging.getLogger('multigrid_web_app')
 
-MODEL_TYPES = [pythonsolver.name, modelicasolver.name]
+MODEL_TYPES = [modelicasolver.name]
 
 @login_required
 def get_main(request):
