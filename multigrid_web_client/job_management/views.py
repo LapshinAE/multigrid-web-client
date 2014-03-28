@@ -23,19 +23,19 @@ from job_management.forms import MathModelForm, JobForm, LoadcaseForm
 from job_management.models import Job, MathModel, Loadcase, Task, Project
 
 from multigrid import calculate
-from multigrid.solvers.modelicasolver import ModelicaLoadcase
-from multigrid.solvers.pythonsolver import PythonSolver
-from multigrid.solvers.modelicasolver import ModelicaSolver
+from multigrid.solvers.modelica import ModelicaLoadcase
+from multigrid.solvers.python import PythonSolver
+from multigrid.solvers.modelica import ModelicaSolver
 from multigrid.multigrid import MultiGrid
-from solvers import pythonsolver
-from solvers import modelicasolver
+from solvers import python
+from solvers import modelica
 
 import logging
 from job_management.util import parse_input_params, decode_dict
 
 logger = logging.getLogger('multigrid_web_app')
 
-MODEL_TYPES = [modelicasolver.name]
+MODEL_TYPES = [modelica.name]
 
 @login_required
 def get_main(request):
@@ -330,9 +330,9 @@ def calc_job(request, job_id):
 	for web_lc in job.loadcases.all():
 		mathmodel = web_lc.mathmodel
 		lc = None
-		if mathmodel.type == pythonsolver.name:
+		if mathmodel.type == python.name:
 			pass
-		elif mathmodel.type == modelicasolver.name:
+		elif mathmodel.type == modelica.name:
 			lc = ModelicaLoadcase(mathmodel.name, solver_params=json.loads(web_lc.solver_params))
 		loadcases.append(lc)
 
