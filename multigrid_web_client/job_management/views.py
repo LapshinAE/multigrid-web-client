@@ -24,9 +24,6 @@ from job_management.models import Job, MathModel, Loadcase, Task, Project
 
 from multigrid import calculate
 from multigrid.solvers.modelica import ModelicaLoadcase
-from multigrid.solvers.python import PythonSolver
-from multigrid.solvers.modelica import ModelicaSolver
-from multigrid.multigrid import MultiGrid
 from solvers import python
 from solvers import modelica
 
