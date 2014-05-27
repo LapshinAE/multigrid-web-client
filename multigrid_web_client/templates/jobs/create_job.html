@@ -1,9 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-    <div class="row">
-        <div class="span8 offset1 ">
+         <div>
             <form action="/project/{{ project_id }}/create_job/" method="POST" id="create_job" class="navbar-form offset1" enctype="multipart/form-data">{% csrf_token %}
                 <div>
                     <h4>Название задачи:</h4>
@@ -58,12 +56,9 @@
                     <h4>Input parameters:</h4>
                     {{ form.input_params }}
                 </div>{% endcomment %}
-                <div>
-                    <button type="submit"  class="btn btn-primary center">Create Job</button>
-                </div>
+                <button type="submit"  class="btn btn-primary">Create Job</button>
+                <button type="button"  class="btn btn-primary" onclick="history.go(-1); return false;">Cancel</button>
             </form>
-        </div>
-    </div>
-
+          </div>
 {%  endblock %}
 
