@@ -110,6 +110,11 @@ def logout(request):
 	auth_logout(request)
 	return TemplateResponse(request, "logout.html")
 
+
+# def password_change(request):
+# 	return TemplateResponse(request, )
+
+
 @login_required
 def profile(request):
 	user = request.user
@@ -117,11 +122,16 @@ def profile(request):
 		data = {}
 		data['email'] = user.email
 		data['name'] = user.username
+		#data['messenger'] = user.messenger
 		return TemplateResponse(request, 'profile.html', {'data': data})
 
 	email = request.POST.get('email', "")
+	name = request.POST.get('name', "")
+	#messenger = request.POST.get('messenger', "")
 	if email:
 		user.email = email
+		user.username = name
+		#user.messenger = messenger
 		user.save()
 
 	return redirect('/projects/')
