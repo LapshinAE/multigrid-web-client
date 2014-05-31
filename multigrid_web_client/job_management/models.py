@@ -41,6 +41,7 @@ class Job(models.Model):
 	input_params = models.TextField()
 	is_input_file = models.BooleanField(default=False)
 	result_params = models.TextField()
+	error_count = models.IntegerField(default=0)
 	#is_finished = models.BooleanField(default=False)
 
 	def __unicode__(self):
@@ -52,6 +53,8 @@ class Task(models.Model):
 	task_id = models.TextField()
 	input_params = models.TextField()
 	result = models.TextField()
+	is_error = models.BooleanField(default=False)
+	log = models.TextField()
 	is_finished = models.BooleanField(default=False)
 
 	def __unicode__(self):

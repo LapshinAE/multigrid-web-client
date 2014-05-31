@@ -4,7 +4,7 @@
         checkLength("{{ item.name }}","{{ forloop.counter }}");
     </script>
     <td class="span4">{{ item.date }}</td>
-    <td class="span4">{{ item.status }}</td>
+    <td class="span4">{{ item.status }} {% if item.error_count > 0 %}Error{% endif %}</td>
     <td class="span1">
         <div class="btn-group mini-btn">
             <button  class="btn btn-small "  onclick="document.location.href = '/calc_job/{{item.id}}/';" >

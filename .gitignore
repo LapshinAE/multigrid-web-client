@@ -1,11 +1,13 @@
 *.pyc
 *.txt
 *.iml
+*.out
 
 .idea/
 */.idea/
 
 files
 input_files
+loadcases
 
 celerybeat-schedule
